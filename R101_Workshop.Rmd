@@ -7,6 +7,28 @@ output: github_document
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
+## Exercise 1.
+
+Open [RStudio IDE](https://www.rstudio.com/products/rstudio/) on your desktop or alternatively use [RStudio Cloud](https://www.rstudio.com/products/rstudio/)
+
+- Create a new R Script from the menu bar: 'File > New File > R Script'.
+
+- Save the new R Script file to a new directory location. Example file path: R Workshops/R101/Exercises/Exercise_1.R
+    
+
+- Using the editor window, enter the following command to assign a value to the variable <i>'x'</i>. Note the use of the assignment symbol <i><-</i>.
+
+```{r eval=TRUE }
+   x <- 24
+```
+
+- Type <i>'x'</i> at the command prompt in the console window and hit return 'key' to print the output.
+
+```{r comment='#'}
+   x 
+```
+
+
 ## GitHub Documents
 
 This is an R Markdown format used for publishing markdown documents to GitHub. When you click the **Knit** button all R code chunks are run and a markdown file (.md) suitable for publishing to GitHub is generated.
