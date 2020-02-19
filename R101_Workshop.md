@@ -174,13 +174,13 @@ each element of x a given number of times.
 ```
 
     ##   PatientID RequestDate BloodGlucose
-    ## 1         1  2009-10-09     6.491544
-    ## 2         2  2009-10-10     5.483582
-    ## 3         3  2009-10-11     7.453884
-    ## 4         4  2009-10-12     8.370148
-    ## 5         5  2009-10-13     6.972329
-    ## 6         6  2009-10-14     6.867176
-    ## 7         7  2009-10-15     5.932013
+    ## 1         1  2009-10-09     5.292934
+    ## 2         2  2009-10-10     6.777429
+    ## 3         3  2009-10-11     7.584441
+    ## 4         4  2009-10-12     4.154302
+    ## 5         5  2009-10-13     6.929125
+    ## 6         6  2009-10-14     7.006056
+    ## 7         7  2009-10-15     5.925260
 
 ``` r
 # 6. Merge the **columns** from blood test results dataframe with the Inpatients dataframe using the **cbind()** function.
@@ -199,13 +199,13 @@ each element of x a given number of times.
     ## 6         6 2009-10-09  55    Type1  Improved         6  2009-10-14
     ## 7         7 2001-10-12  27    Type1  Improved         7  2009-10-15
     ##   BloodGlucose
-    ## 1     6.491544
-    ## 2     5.483582
-    ## 3     7.453884
-    ## 4     8.370148
-    ## 5     6.972329
-    ## 6     6.867176
-    ## 7     5.932013
+    ## 1     5.292934
+    ## 2     6.777429
+    ## 3     7.584441
+    ## 4     4.154302
+    ## 5     6.929125
+    ## 6     7.006056
+    ## 7     5.925260
 
 ``` r
 # 7. Create a new (column) vector named **Discharge** to represent patient discharge dates, derived from AdmDate.
@@ -227,13 +227,13 @@ each element of x a given number of times.
     ## 6         6 2009-10-09  55    Type1  Improved         6  2009-10-14
     ## 7         7 2001-10-12  27    Type1  Improved         7  2009-10-15
     ##   BloodGlucose    DisDate
-    ## 1     6.491544 2009-10-16
-    ## 2     5.483582 2009-11-05
-    ## 3     7.453884 2009-10-22
-    ## 4     8.370148 2009-10-30
-    ## 5     6.972329 2009-10-17
-    ## 6     6.867176 2009-10-11
-    ## 7     5.932013 2001-10-14
+    ## 1     5.292934 2009-10-17
+    ## 2     6.777429 2009-11-05
+    ## 3     7.584441 2009-10-25
+    ## 4     4.154302 2009-11-01
+    ## 5     6.929125 2009-10-18
+    ## 6     7.006056 2009-10-13
+    ## 7     5.925260 2001-10-15
 
 **list()** - creates a list of named or unnamed arguments with indexing
 rule: 1 to *n* including 1 an *n*
@@ -322,8 +322,8 @@ call the elements corresponding to specific index.
     ##  $ Status      : Factor w/ 3 levels "Excellent","Improved",..: 3 2 1 3 3 2 2
     ##  $ PatientID   : int  1 2 3 4 5 6 7
     ##  $ RequestDate : Date, format: "2009-10-09" "2009-10-10" ...
-    ##  $ BloodGlucose: num  6.49 5.48 7.45 8.37 6.97 ...
-    ##  $ DisDate     : Date, format: "2009-10-16" "2009-11-05" ...
+    ##  $ BloodGlucose: num  5.29 6.78 7.58 4.15 6.93 ...
+    ##  $ DisDate     : Date, format: "2009-10-17" "2009-11-05" ...
 
 ``` r
 # **summary()
@@ -339,15 +339,15 @@ call the elements corresponding to specific index.
     ##  Max.   :7.0   2009-10-09:1   Max.   :55.00                          
     ##                2009-10-13:1                                          
     ##    PatientID    RequestDate          BloodGlucose      DisDate          
-    ##  Min.   :1.0   Min.   :2009-10-09   Min.   :5.484   Min.   :2001-10-14  
-    ##  1st Qu.:2.5   1st Qu.:2009-10-10   1st Qu.:6.212   1st Qu.:2009-10-13  
-    ##  Median :4.0   Median :2009-10-12   Median :6.867   Median :2009-10-17  
-    ##  Mean   :4.0   Mean   :2009-10-12   Mean   :6.796   Mean   :2008-08-29  
-    ##  3rd Qu.:5.5   3rd Qu.:2009-10-13   3rd Qu.:7.213   3rd Qu.:2009-10-26  
-    ##  Max.   :7.0   Max.   :2009-10-15   Max.   :8.370   Max.   :2009-11-05  
+    ##  Min.   :1.0   Min.   :2009-10-09   Min.   :4.154   Min.   :2001-10-15  
+    ##  1st Qu.:2.5   1st Qu.:2009-10-10   1st Qu.:5.609   1st Qu.:2009-10-15  
+    ##  Median :4.0   Median :2009-10-12   Median :6.777   Median :2009-10-18  
+    ##  Mean   :4.0   Mean   :2009-10-12   Mean   :6.239   Mean   :2008-08-30  
+    ##  3rd Qu.:5.5   3rd Qu.:2009-10-13   3rd Qu.:6.968   3rd Qu.:2009-10-28  
+    ##  Max.   :7.0   Max.   :2009-10-15   Max.   :7.584   Max.   :2009-11-05  
     ## 
 
-## Data Selection (Slicing and Extracting)
+## Data Selection
 
 Vector Indexing in R
 
@@ -400,17 +400,7 @@ Inpatients_with_results['PatientID']
     ## 6         6
     ## 7         7
 
-``` r
-# Use x[x > 3,] to select all elements greater than 3
-Inpatients_with_results[Inpatients_with_results$Status == 'Poor',]
-```
-
-    ##   PatientID    AdmDate    DisDate Age Diabetes Status RequestDate BloodGlucose
-    ## 1         1 2009-10-15 2009-10-16  25    Type1   Poor  2009-10-09     6.491544
-    ## 4         4 2009-10-28 2009-10-30  52    Type1   Poor  2009-10-12     8.370148
-    ## 5         5 2009-10-13 2009-10-17  30    Type2   Poor  2009-10-13     6.972329
-
-## Including Code
+## Slicing and Extracting
 
 You can include R code in the document as follows:
 
