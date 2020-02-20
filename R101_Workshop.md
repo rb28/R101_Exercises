@@ -16,9 +16,8 @@ At the end of this workshop you will:
   - have a good understanding of R data structures and datatypes.
   - be familiar with common base R functions.
   - be able to generate common data structures (vectors and dataframes).
-  - be able to select, slice and extract elements from common data
-    structures.
-  - be comfortable using common input and output functions
+  - be able to perform vectorised operations on common data structures.
+  - be able to use common input and output functions
 
 ## R Workspace
 
@@ -52,6 +51,30 @@ Cloud](https://www.https://rstudio.cloud/)
 ```
 
     # [1] 24
+
+## Data Input and Output
+
+R can import data from flat files, from Microsoft Excel and Access, from
+specialty formats like XML, and from a variety of relational database
+systems amongst others.
+
+However, for the purpose of this workshop you will focus on importing
+data from flat files, MS Excel and MS SQL databases.
+
+# Importing data from a **.csv** file.
+
+> You will require the readr package. If it isn’t already installed, the
+> package can be installed by running the command:
+> *install.packages(‘readr’)* from the console.
+
+> To begin, type *library(readr)* in the editor pane and click **Run**
+> to load the package to your session.
+
+> Next, add the following command on a new line in the editor pane and
+> click **Run** to import and assign the csv data to a new variable in
+> your R session environment.
+
+    csvData <- read_csv('/path/to/csv_file.csv')
 
 ## Data Generation
 
@@ -150,8 +173,8 @@ each element of x a given number of times.
 
 ``` r
 # 4. Combine the **rows** from two inpatient datasets into a single dataframe using the **rbind()** function.
-    All_Inpatients <- rbind(Inpatients_1, Inpatients_2)
-    All_Inpatients
+    All_patients <- rbind(Inpatients_1, Inpatients_2)
+    All_patients
 ```
 
     ##   PatientID    AdmDate Age Diabetes    Status
@@ -185,9 +208,9 @@ each element of x a given number of times.
 ``` r
 # 6. Merge the **columns** from blood test results dataframe with the Inpatients dataframe using the **cbind()** function.
     
-    Inpatients_with_results <- cbind(All_Inpatients, BloodTest_Results)
+    patientData <- cbind(All_patients, BloodTest_Results)
     
-    Inpatients_with_results
+    patientData
 ```
 
     ##   PatientID    AdmDate Age Diabetes    Status PatientID RequestDate
@@ -210,12 +233,12 @@ each element of x a given number of times.
 ``` r
 # 7. Create a new (column) vector named **Discharge** to represent patient discharge dates, derived from AdmDate.
     
-    Discharge <- as.Date(Inpatients_with_results$AdmDate) + sample(1:5,7,replace=T)
+    Discharge <- as.Date(patientData$AdmDate) + sample(1:5,7,replace=T)
     
 # 8. Add a new (column) vector named **DisDate** to the results dataframe using the Discharge vector.
     
-    Inpatients_with_results$DisDate <- Discharge
-    Inpatients_with_results
+    patientData$DisDate <- Discharge
+    patientData
 ```
 
     ##   PatientID    AdmDate Age Diabetes    Status PatientID RequestDate
@@ -239,7 +262,7 @@ each element of x a given number of times.
 rule: 1 to *n* including 1 an *n*
 
 ``` r
-    l <- list(a=c(1,2), b="Hello World", c=-3+2i )
+    l <- list(a=c(1,2), b="Hello World", c=-3+2i , d=data.frame(A=letters[1:3],B=1:3))
     l
 ```
 
@@ -251,6 +274,12 @@ rule: 1 to *n* including 1 an *n*
     ## 
     ## $c
     ## [1] -3+2i
+    ## 
+    ## $d
+    ##   A B
+    ## 1 a 1
+    ## 2 b 2
+    ## 3 c 3
 
 ``` r
     # Note Complex Number -3 + 2i
@@ -271,11 +300,18 @@ call the elements corresponding to specific index.
 
     ## [1] "Hello World"
 
+``` r
+    l$d[[1]]
+```
+
+    ## [1] a b c
+    ## Levels: a b c
+
 ## Data Inspection
 
 ``` r
 # **names(*object*)** - output the names of (columns) vectors in an object
-    names(Inpatients_with_results)
+    names(patientData)
 ```
 
     ## [1] "PatientID"    "AdmDate"      "Age"          "Diabetes"     "Status"      
@@ -283,35 +319,35 @@ call the elements corresponding to specific index.
 
 ``` r
 # **dim(*object*)** - output the dimensions of an object
-    dim(Inpatients_with_results)
+    dim(patientData)
 ```
 
     ## [1] 7 9
 
 ``` r
 # **length(*object*)** - number of elements in object  
-    length(Inpatients_with_results)
+    length(patientData)
 ```
 
     ## [1] 9
 
 ``` r
 # **nrow(object)**  - number of rows present in object
-    nrow(Inpatients_with_results)
+    nrow(patientData)
 ```
 
     ## [1] 7
 
 ``` r
 # **ncol()** - number of columns present in object
-    ncol(Inpatients_with_results)
+    ncol(patientData)
 ```
 
     ## [1] 9
 
 ``` r
 # **str()** - structure of an object object
-    str(Inpatients_with_results)
+    str(patientData)
 ```
 
     ## 'data.frame':    7 obs. of  9 variables:
@@ -327,7 +363,7 @@ call the elements corresponding to specific index.
 
 ``` r
 # **summary()
-    summary(Inpatients_with_results)
+    summary(patientData)
 ```
 
     ##    PatientID         AdmDate       Age         Diabetes       Status 
@@ -353,7 +389,7 @@ Vector Indexing in R
 
 ``` r
 # Use x[n] to return the Nth element.
-Inpatients_with_results[1]
+patientData[1]
 ```
 
     ##   PatientID
@@ -367,20 +403,20 @@ Inpatients_with_results[1]
 
 ``` r
 # Use x[-n] to return all excluding duplicated PatientID vector.
-Inpatients_with_results <- Inpatients_with_results[-6]
+patientData <- patientData[-6]
 
-# Check that the number of columns have reduced  by 1.
-dim(Inpatients_with_results)
+# Confirm that the number of columns have reduced  by 1.
+dim(patientData)
 ```
 
     ## [1] 7 8
 
 ``` r
-# Use x[c(1,4,2)] to select specific elements in the specified order
-Inpatients_with_results <- Inpatients_with_results[c(1,2,8,3:7)]
+# Use x[c(index1,index2,...)] to select specific elements in a specified order
+patientData <- patientData[c(1,2,8,3:7)]
 
-# Check that the (column) vectors have been reordered.
-names(Inpatients_with_results)
+# Confirm that the (column) vectors have been reordered.
+names(patientData)
 ```
 
     ## [1] "PatientID"    "AdmDate"      "DisDate"      "Age"          "Diabetes"    
@@ -388,7 +424,7 @@ names(Inpatients_with_results)
 
 ``` r
 # Use x[name] to select named element
-Inpatients_with_results['PatientID']
+patientData['PatientID']
 ```
 
     ##   PatientID
