@@ -8,7 +8,7 @@ instance.
 
 To follow along, type the Inputs (commands) highlighted grey into the
 **editor pane** and compare the results with the expected outputs (text
-highlighted grey and preceded by **\#**).
+highlighted grey and preceded by **\#\#**).
 
 At the end of this workshop you will:
 
@@ -61,7 +61,7 @@ systems amongst others.
 However, for the purpose of this workshop you will focus on importing
 data from flat files, MS Excel and MS SQL databases.
 
-# Importing data from a **.csv** file.
+### Importing data from a **.csv** file.
 
 > You will require the readr package. If it isn’t already installed, the
 > package can be installed by running the command:
@@ -74,9 +74,44 @@ data from flat files, MS Excel and MS SQL databases.
 > click **Run** to import and assign the csv data to a new variable in
 > your R session environment.
 
+    library(readr)
     csvData <- read_csv('/path/to/csv_file.csv')
 
+### Importing data from Microsoft Excel
+
+> Install the package **readxl** using \*\*install.packages(‘readxl’) if
+> not already installed.
+
+> Enter and **Run** the following commands.
+
+    library(readxl)
+    xlData <- read_excel('/path/to/xl_file.xlsx')
+    
+    [options : sheet = 'name|number', range = cell_rows(1:4)|cell-cols("B:D")|"sheet1!B1:D5"]
+
+### Importing data from Microsoft SQL
+
+> Install **RODBC** if not already installed.
+
+> **Run** the following commands from the editor pane.
+
+``` 
+# load the library
+library(RODBC)
+
+# create a odbc connection.
+con <- odbcDriverConnect('driver={SQL Server}; 
+                    server={RBHDWHRED003\\SQL};
+                    database=BEDROCK_PLICS;
+                    trusted_connection=true')
+                    
+df = sqlQuery(con, "select * from table") # read a table 
+close(con) # close the connection to the database                    
+```
+
 ## Data Generation
+
+### Vectors
 
 Commonly used data generation functions include: c(), seq(), rep() and
 data.frame(). Occasionally we may also use list() and array() to
@@ -129,6 +164,8 @@ each element of x a given number of times.
 ```
 
     ##  [1] 1 1 1 1 2 2 2 2 3 3 3 3
+
+### Dataframes
 
 **data.frame()** - creates a dataframe of named or unnamed arguments.
 
@@ -258,6 +295,8 @@ each element of x a given number of times.
     ## 6     7.006056 2009-10-13
     ## 7     5.925260 2001-10-15
 
+### Lists
+
 **list()** - creates a list of named or unnamed arguments with indexing
 rule: 1 to *n* including 1 an *n*
 
@@ -383,6 +422,44 @@ call the elements corresponding to specific index.
     ##  Max.   :7.0   Max.   :2009-10-15   Max.   :7.584   Max.   :2009-11-05  
     ## 
 
+> Note: The datatype of the field **AdmDate** is a factor with 7 levels
+> as opposed to Date. This could be an issue if we ever need to perform
+> datetime operations. Thankfully, R provides the following functions to
+> perform datatype conversions.
+
+  - as.character() - converts arg to character datatype
+  - as.integer() - converts arg to integer
+  - as.numeric() - converts arg to numeric
+  - as.date() - converts arg to a date
+  - as.factor() - converts arg to a factor
+
+<!-- end list -->
+
+``` r
+# Let's convert AdmDate datatype to Date using as.Date()
+  patientData$AdmDate = as.Date(patientData$AdmDate)
+
+# Check class to confirm data conversion
+  class(patientData$AdmDate)
+```
+
+    ## [1] "Date"
+
+``` r
+  str(patientData)
+```
+
+    ## 'data.frame':    7 obs. of  9 variables:
+    ##  $ PatientID   : int  1 2 3 4 5 6 7
+    ##  $ AdmDate     : Date, format: "2009-10-15" "2009-11-01" ...
+    ##  $ Age         : num  25 34 28 52 30 55 27
+    ##  $ Diabetes    : Factor w/ 2 levels "Type1","Type2": 1 2 1 1 2 1 1
+    ##  $ Status      : Factor w/ 3 levels "Excellent","Improved",..: 3 2 1 3 3 2 2
+    ##  $ PatientID   : int  1 2 3 4 5 6 7
+    ##  $ RequestDate : Date, format: "2009-10-09" "2009-10-10" ...
+    ##  $ BloodGlucose: num  5.29 6.78 7.58 4.15 6.93 ...
+    ##  $ DisDate     : Date, format: "2009-10-17" "2009-11-05" ...
+
 ## Data Selection
 
 Vector Indexing in R
@@ -436,27 +513,158 @@ patientData['PatientID']
     ## 6         6
     ## 7         7
 
-## Slicing and Extracting
-
-You can include R code in the document as follows:
+Similarly, vector members(columns) of a dataframe can be extracted or
+operated on using either the index or the name of the required vector
+prefixed by the dataframe and the \*\*\(** notation (example: df\)name)
 
 ``` r
-summary(cars)
+# Load built-in mtcars dataset
+data("mtcars") 
+
+# Extract data for car model(s) with the best fuel economy
+mtcars[which.max(mtcars[,1]),]
 ```
 
-    ##      speed           dist       
-    ##  Min.   : 4.0   Min.   :  2.00  
-    ##  1st Qu.:12.0   1st Qu.: 26.00  
-    ##  Median :15.0   Median : 36.00  
-    ##  Mean   :15.4   Mean   : 42.98  
-    ##  3rd Qu.:19.0   3rd Qu.: 56.00  
-    ##  Max.   :25.0   Max.   :120.00
+    ##                 mpg cyl disp hp drat    wt qsec vs am gear carb
+    ## Toyota Corolla 33.9   4 71.1 65 4.22 1.835 19.9  1  1    4    1
 
-## Including Plots
+``` r
+mtcars[which.max(mtcars$mpg),]
+```
 
-You can also embed plots, for example:
+    ##                 mpg cyl disp hp drat    wt qsec vs am gear carb
+    ## Toyota Corolla 33.9   4 71.1 65 4.22 1.835 19.9  1  1    4    1
 
-![](R101_Workshop_files/figure-gfm/pressure-1.png)<!-- -->
+``` r
+# Extract horsepower & weight of cars with below average fuel economy
+mtcars[which(mtcars$mpg < mean(mtcars$mpg)),c(4,6)]
+```
 
-Note that the `echo = FALSE` parameter was added to the code chunk to
-prevent printing of the R code that generated the plot.
+    ##                      hp    wt
+    ## Hornet Sportabout   175 3.440
+    ## Valiant             105 3.460
+    ## Duster 360          245 3.570
+    ## Merc 280            123 3.440
+    ## Merc 280C           123 3.440
+    ## Merc 450SE          180 4.070
+    ## Merc 450SL          180 3.730
+    ## Merc 450SLC         180 3.780
+    ## Cadillac Fleetwood  205 5.250
+    ## Lincoln Continental 215 5.424
+    ## Chrysler Imperial   230 5.345
+    ## Dodge Challenger    150 3.520
+    ## AMC Javelin         150 3.435
+    ## Camaro Z28          245 3.840
+    ## Pontiac Firebird    175 3.845
+    ## Ford Pantera L      264 3.170
+    ## Ferrari Dino        175 2.770
+    ## Maserati Bora       335 3.570
+
+``` r
+# Extract car models with hp > 100
+mtcars[mtcars$hp > 100, ] 
+```
+
+    ##                      mpg cyl  disp  hp drat    wt  qsec vs am gear carb
+    ## Mazda RX4           21.0   6 160.0 110 3.90 2.620 16.46  0  1    4    4
+    ## Mazda RX4 Wag       21.0   6 160.0 110 3.90 2.875 17.02  0  1    4    4
+    ## Hornet 4 Drive      21.4   6 258.0 110 3.08 3.215 19.44  1  0    3    1
+    ## Hornet Sportabout   18.7   8 360.0 175 3.15 3.440 17.02  0  0    3    2
+    ## Valiant             18.1   6 225.0 105 2.76 3.460 20.22  1  0    3    1
+    ## Duster 360          14.3   8 360.0 245 3.21 3.570 15.84  0  0    3    4
+    ## Merc 280            19.2   6 167.6 123 3.92 3.440 18.30  1  0    4    4
+    ## Merc 280C           17.8   6 167.6 123 3.92 3.440 18.90  1  0    4    4
+    ## Merc 450SE          16.4   8 275.8 180 3.07 4.070 17.40  0  0    3    3
+    ## Merc 450SL          17.3   8 275.8 180 3.07 3.730 17.60  0  0    3    3
+    ## Merc 450SLC         15.2   8 275.8 180 3.07 3.780 18.00  0  0    3    3
+    ## Cadillac Fleetwood  10.4   8 472.0 205 2.93 5.250 17.98  0  0    3    4
+    ## Lincoln Continental 10.4   8 460.0 215 3.00 5.424 17.82  0  0    3    4
+    ## Chrysler Imperial   14.7   8 440.0 230 3.23 5.345 17.42  0  0    3    4
+    ## Dodge Challenger    15.5   8 318.0 150 2.76 3.520 16.87  0  0    3    2
+    ## AMC Javelin         15.2   8 304.0 150 3.15 3.435 17.30  0  0    3    2
+    ## Camaro Z28          13.3   8 350.0 245 3.73 3.840 15.41  0  0    3    4
+    ## Pontiac Firebird    19.2   8 400.0 175 3.08 3.845 17.05  0  0    3    2
+    ## Lotus Europa        30.4   4  95.1 113 3.77 1.513 16.90  1  1    5    2
+    ## Ford Pantera L      15.8   8 351.0 264 4.22 3.170 14.50  0  1    5    4
+    ## Ferrari Dino        19.7   6 145.0 175 3.62 2.770 15.50  0  1    5    6
+    ## Maserati Bora       15.0   8 301.0 335 3.54 3.570 14.60  0  1    5    8
+    ## Volvo 142E          21.4   4 121.0 109 4.11 2.780 18.60  1  1    4    2
+
+``` r
+subset(mtcars, mtcars$hp > 100)
+```
+
+    ##                      mpg cyl  disp  hp drat    wt  qsec vs am gear carb
+    ## Mazda RX4           21.0   6 160.0 110 3.90 2.620 16.46  0  1    4    4
+    ## Mazda RX4 Wag       21.0   6 160.0 110 3.90 2.875 17.02  0  1    4    4
+    ## Hornet 4 Drive      21.4   6 258.0 110 3.08 3.215 19.44  1  0    3    1
+    ## Hornet Sportabout   18.7   8 360.0 175 3.15 3.440 17.02  0  0    3    2
+    ## Valiant             18.1   6 225.0 105 2.76 3.460 20.22  1  0    3    1
+    ## Duster 360          14.3   8 360.0 245 3.21 3.570 15.84  0  0    3    4
+    ## Merc 280            19.2   6 167.6 123 3.92 3.440 18.30  1  0    4    4
+    ## Merc 280C           17.8   6 167.6 123 3.92 3.440 18.90  1  0    4    4
+    ## Merc 450SE          16.4   8 275.8 180 3.07 4.070 17.40  0  0    3    3
+    ## Merc 450SL          17.3   8 275.8 180 3.07 3.730 17.60  0  0    3    3
+    ## Merc 450SLC         15.2   8 275.8 180 3.07 3.780 18.00  0  0    3    3
+    ## Cadillac Fleetwood  10.4   8 472.0 205 2.93 5.250 17.98  0  0    3    4
+    ## Lincoln Continental 10.4   8 460.0 215 3.00 5.424 17.82  0  0    3    4
+    ## Chrysler Imperial   14.7   8 440.0 230 3.23 5.345 17.42  0  0    3    4
+    ## Dodge Challenger    15.5   8 318.0 150 2.76 3.520 16.87  0  0    3    2
+    ## AMC Javelin         15.2   8 304.0 150 3.15 3.435 17.30  0  0    3    2
+    ## Camaro Z28          13.3   8 350.0 245 3.73 3.840 15.41  0  0    3    4
+    ## Pontiac Firebird    19.2   8 400.0 175 3.08 3.845 17.05  0  0    3    2
+    ## Lotus Europa        30.4   4  95.1 113 3.77 1.513 16.90  1  1    5    2
+    ## Ford Pantera L      15.8   8 351.0 264 4.22 3.170 14.50  0  1    5    4
+    ## Ferrari Dino        19.7   6 145.0 175 3.62 2.770 15.50  0  1    5    6
+    ## Maserati Bora       15.0   8 301.0 335 3.54 3.570 14.60  0  1    5    8
+    ## Volvo 142E          21.4   4 121.0 109 4.11 2.780 18.60  1  1    4    2
+
+## Useful functions
+
+Set Operations
+
+``` r
+# Create the vectors x & y
+x <- c(1,4,2,7)
+y <- c(1,7,9,5,3)
+
+# Try the following functions, and carefully observe the results 
+union(x, y)
+```
+
+    ## [1] 1 4 2 7 9 5 3
+
+``` r
+intersect(x, y)
+```
+
+    ## [1] 1 7
+
+``` r
+setdiff(x, y)
+```
+
+    ## [1] 4 2
+
+Sort vs Order vs Rank
+
+``` r
+# Returns reordered elements
+sort(x)
+```
+
+    ## [1] 1 2 4 7
+
+``` r
+# Returns reordered indices
+order(x)
+```
+
+    ## [1] 1 3 2 4
+
+``` r
+# Returns ranked position
+rank(x)
+```
+
+    ## [1] 1 3 2 4
